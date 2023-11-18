@@ -1,16 +1,29 @@
 #include "shell.h"
+
 /**
- * handle_exit - function that terminate the prog when
- * user types "exit".
- * @cmd: the string to be read.
- * Return: nothing.
+ * _exitStatus - exit status
  *
+ * @prmData: data structure
  */
-void handle_exit(char *cmd)
+void _exitStatus(appData_t *prmData)
 {
-	if (_strcmp("exit", cmd) == 0)
+	int code = EXIT_SUCCESS;
+
+	if (prmData == NULL)
+		return;
+
+	if (prmData->arguments != NULL)
+		code = _atoi(prmData->arguments[1]);
+
+	if (code < 0 || (prmData->arguments[1] != NULL && !_isNumber(prmData->arguments[1])))
 	{
-		free(cmd);
-		exit(EXIT_SUCCESS);
+		_errorHandler(prmData, 106);
+		code = 2;
 	}
+
+	_freeAppData(prmData);
+	_freeEnvList(prmData->env);
+	prmData->env = NULL;
+	free(prmData);
+	exit(code);
 }
